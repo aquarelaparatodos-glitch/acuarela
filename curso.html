@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Curso de Acuarela | Lecciones</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="curso">
+  <header class="header">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-badge"></div>
+        <span>Curso de Acuarela</span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" data-page="home">Inicio</a>
+        <a href="curso.html" data-page="curso">Curso</a>
+        <a href="imagenes.html" data-page="imagenes">Imágenes</a>
+        <a href="calendario.html" data-page="calendario">Calendario</a>
+        <span id="navUser" style="margin-left:8px;color:#444"></span>
+        <button id="btnLogout" class="btn secondary">Salir</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1>Tu progreso</h1>
+      <p class="lead">Marca cada lección como completada para llevar control de tu avance.</p>
+      <div class="progress"><div class="progress-bar"></div></div>
+      <div id="progressText" style="margin-top:8px; color:#555">0% completado</div>
+    </section>
+
+    <section class="row row-2" style="margin-top:16px">
+      <article class="lesson" data-id="l1">
+        <h2>1. Herramientas y materiales</h2>
+        <div class="meta">Pinceles, gramajes de papel, pigmentos</div>
+        <p>Conoce las características del papel de acuarela, tipos de pincel y pigmentos. Aprende a preparar tu mesa de trabajo.</p>
+        <div class="row" style="grid-template-columns:auto auto auto; align-items:center">
+          <button class="btn doComplete">Marcar completada</button>
+          <button class="btn secondary undoComplete">Desmarcar</button>
+          <div class="status">Pendiente</div>
+        </div>
+      </article>
+
+      <article class="lesson" data-id="l2">
+        <h2>2. Mojado sobre mojado</h2>
+        <div class="meta">Difusiones suaves y atmósferas</div>
+        <p>Domina transiciones suaves humedeciendo previamente el papel y aplicando pigmento diluido.</p>
+        <div class="row" style="grid-template-columns:auto auto auto; align-items:center">
+          <button class="btn doComplete">Marcar completada</button>
+          <button class="btn secondary undoComplete">Desmarcar</button>
+          <div class="status">Pendiente</div>
+        </div>
+      </article>
+
+      <article class="lesson" data-id="l3">
+        <h2>3. Mojado sobre seco</h2>
+        <div class="meta">Definición y bordes</div>
+        <p>Ideal para detalles y capas. Combina bordes definidos con zonas suaves para volumen y textura.</p>
+        <div class="row" style="grid-template-columns:auto auto auto; align-items:center">
+          <button class="btn doComplete">Marcar completada</button>
+          <button class="btn secondary undoComplete">Desmarcar</button>
+          <div class="status">Pendiente</div>
+        </div>
+      </article>
+
+      <article class="lesson" data-id="l4">
+        <h2>4. Degradados y valores</h2>
+        <div class="meta">Control del agua</div>
+        <p>Practica escalas de valor, degradados lineales y radiales para dar profundidad y atmósfera.</p>
+        <div class="row" style="grid-template-columns:auto auto auto; align-items:center">
+          <button class="btn doComplete">Marcar completada</button>
+          <button class="btn secondary undoComplete">Desmarcar</button>
+          <div class="status">Pendiente</div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">Sigue creando, el agua guía el color ✨</footer>
+  <script src="app.js"></script>
+</body>
+</html>

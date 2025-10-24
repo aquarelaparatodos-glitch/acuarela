@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Curso de Acuarela | Bienvenida</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="home">
+  <header class="header">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-badge"></div>
+        <span>Curso de Acuarela</span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" data-page="home">Inicio</a>
+        <a class="gated" href="curso.html" data-page="curso" style="display:none">Curso</a>
+        <a class="gated" href="imagenes.html" data-page="imagenes" style="display:none">Imágenes</a>
+        <a class="gated" href="calendario.html" data-page="calendario" style="display:none">Calendario</a>
+        <span id="navUser" style="margin-left:8px;color:#444"></span>
+        <button id="btnLogout" class="btn secondary" style="display:none">Salir</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="row row-2">
+      <section class="card login-hero">
+        <div style="padding: 18px;">
+          <h1>Bienvenid@ al mundo de la acuarela</h1>
+          <p class="lead">Explora técnicas, practica con láminas para colorear y organiza tu aprendizaje. Todo con un estilo artístico y tu progreso guardado.</p>
+          <ul>
+            <li>Lecciones con control de avance</li>
+            <li>Imágenes listas para colorear (click para pintar)</li>
+            <li>Calendario de actividades personal</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <div id="loginSection" class="login-wrap">
+          <div>
+            <h2>Inicia sesión</h2>
+            <p class="lead">Usamos inicio de sesión simple para guardar tu progreso en este navegador.</p>
+          </div>
+          <form id="loginForm" class="row" autocomplete="off">
+            <label>Nombre de usuario
+              <input id="username" class="input" placeholder="Ej: camila_art" />
+            </label>
+            <button class="btn" type="submit">Entrar</button>
+          </form>
+          <small style="color:#666">Nota: Este inicio de sesión es local (no requiere contraseña).</small>
+        </div>
+
+        <div id="welcomeCard" style="display:none">
+          <h2>¡Hola, <span id="who"></span>!</h2>
+          <p class="lead">Tu cuenta está activa en este navegador. Continúa hacia el curso o explora las imágenes para colorear.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a id="goTo" class="btn-link active" href="curso.html">Ir al curso</a>
+            <a class="btn-link" href="imagenes.html">Imágenes para colorear</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:16px">
+      <h2>¿Qué aprenderás?</h2>
+      <div class="row row-3">
+        <div class="lesson">
+          <strong>Técnicas básicas de agua y pigmento</strong>
+          <div class="meta">Mojado sobre mojado, mojado sobre seco</div>
+        </div>
+        <div class="lesson">
+          <strong>Degradados y transiciones</strong>
+          <div class="meta">Control de agua, bordes suaves</div>
+        </div>
+        <div class="lesson">
+          <strong>Texturas creativas</strong>
+          <div class="meta">Sal, alcohol, salpicado</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">Hecho con arte y agua ✨</footer>
+  <script src="app.js"></script>
+</body>
+</html>

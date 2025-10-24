@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Curso de Acuarela | Calendario</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="calendario">
+  <header class="header">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-badge"></div>
+        <span>Curso de Acuarela</span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" data-page="home">Inicio</a>
+        <a href="curso.html" data-page="curso">Curso</a>
+        <a href="imagenes.html" data-page="imagenes">Imágenes</a>
+        <a href="calendario.html" data-page="calendario">Calendario</a>
+        <span id="navUser" style="margin-left:8px;color:#444"></span>
+        <button id="btnLogout" class="btn secondary">Salir</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card calendar">
+      <div class="cal-header">
+        <button id="calPrev" class="btn secondary">←</button>
+        <div id="calTitle" style="font-weight:700"></div>
+        <button id="calNext" class="btn">→</button>
+      </div>
+      <div id="calGrid" class="cal-grid"></div>
+      <div class="cal-foot">Haz clic en un día para agregar una actividad. Se guardan por usuario.</div>
+    </section>
+  </main>
+
+  <footer class="footer">Planifica tu práctica para avanzar constante ✨</footer>
+  <script src="app.js"></script>
+</body>
+</html>
