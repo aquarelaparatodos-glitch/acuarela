@@ -3,73 +3,105 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Curso de Acuarela - Iniciar sesión</title>
+  <title>Curso de Acuarela - Inicio</title>
   <link rel="stylesheet" href="styles.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Navbar -->
   <header class="navbar">
-    <div class="container">
-      <a class="brand" href="index.html">Acuarela</a>
-      <nav>
+    <div class="container nav__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__dot"></span>
+        Curso de Acuarela
+      </a>
+      <nav class="nav__links">
         <a href="index.html" class="active">Inicio</a>
         <a href="curso.html">Curso</a>
         <a href="imagenes.html">Imágenes</a>
         <a href="calendario.html">Calendario</a>
-        <button id="btnLogout" class="btn btnLight" style="display:none;" onclick="appLogout()">Salir</button>
+        <button id="btnLogout" class="btn btnLight btnSmall" style="display:none;" onclick="appLogout()">Salir</button>
       </nav>
     </div>
   </header>
 
-  <main class="container" style="padding-top:24px;">
-    <div class="grid-2">
-      <section class="card">
-        <h1>Bienvenid@ al mundo de la acuarela</h1>
-        <ul>
-          <li>Lecciones con control de avance</li>
-          <li>Imágenes PNG para descargar</li>
-          <li>Calendario de actividades</li>
-        </ul>
-      </section>
+  <!-- Landing -->
+  <main class="landing">
+    <!-- Hero -->
+    <section class="hero card glass">
+      <h1 class="hero__title">Bienvenid@ al mundo de la acuarela</h1>
+      <p class="hero__subtitle">
+        Explora técnicas, practica con láminas y organiza tu aprendizaje. Todo con un estilo artístico y tu progreso guardado.
+      </p>
+      <ul class="hero__bullets">
+        <li>Lecciones con control de avance</li>
+        <li>Imágenes PNG para descargar</li>
+        <li>Calendario de actividades</li>
+      </ul>
+    </section>
 
-      <section class="card" style="max-width:640px;margin-left:auto;">
-        <h2>Inicia sesión</h2>
-        <form id="loginForm">
-          <label>Correo</label>
-          <input type="email" name="email" placeholder="tu@correo.com" required />
-          <label>Contraseña</label>
-          <input type="password" name="password" placeholder="Tu contraseña" required />
-          <button type="submit" class="btn" style="margin-top:12px;">Entrar</button>
+    <!-- Auth -->
+    <section class="auth card glass">
+      <div class="auth__header">
+        <h2>Tu espacio creativo</h2>
+        <p>Inicia sesión o crea tu cuenta</p>
+      </div>
+
+      <div class="auth__grid">
+        <!-- Login -->
+        <form id="loginForm" class="form form--inline">
+          <div class="form__row">
+            <label>Correo</label>
+            <input type="email" name="email" placeholder="tu@correo.com" required />
+          </div>
+          <div class="form__row">
+            <label>Contraseña</label>
+            <input type="password" name="password" placeholder="Tu contraseña" required />
+          </div>
+          <div class="form__actions">
+            <button type="submit" class="btn btnPrimary">Entrar</button>
+            <button type="button" class="btn btnGoogle" onclick="googleLogin()">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+              Iniciar con Google
+            </button>
+          </div>
         </form>
 
-        <div style="margin:16px 0;text-align:center;color:#666;">o</div>
+        <!-- Divider -->
+        <div class="divider" role="separator" aria-label="o">
+          <span>o</span>
+        </div>
 
-        <button type="button" class="btn btnLight" onclick="googleLogin()">
-          Iniciar sesión con Google
-        </button>
-
-        <hr style="margin:24px 0; opacity:.2;">
-
-        <h3>Crear cuenta</h3>
-        <form id="registerForm">
-          <label>Nombre de usuario (alias)</label>
-          <input type="text" name="displayName" placeholder="Tu nombre visible" required />
-          <label>Correo</label>
-          <input type="email" name="email" placeholder="tu@correo.com" required />
-          <label>Contraseña</label>
-          <input type="password" name="password" placeholder="Mínimo 6 caracteres" required />
-          <button type="submit" class="btn btnLight" style="margin-top:12px;">Registrarme</button>
+        <!-- Register -->
+        <form id="registerForm" class="form">
+          <div class="form__row">
+            <label>Nombre de usuario (alias)</label>
+            <input type="text" name="displayName" placeholder="Tu nombre visible" required />
+          </div>
+          <div class="form__row">
+            <label>Correo</label>
+            <input type="email" name="email" placeholder="tu@correo.com" required />
+          </div>
+          <div class="form__row">
+            <label>Contraseña</label>
+            <input type="password" name="password" placeholder="Mínimo 6 caracteres" required />
+          </div>
+          <div class="form__actions">
+            <button type="submit" class="btn btnLight">Registrarme</button>
+          </div>
         </form>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
     <div class="container">© 2025 Acuarela</div>
   </footer>
 
-  <!-- SDKs de Firebase cargados como módulo -->
+  <!-- Firebase SDKs (v9+ modular) -->
   <script type="module">
-    // Importar SDKs desde CDN (v10.13.1; puedes usar la última estable)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import {
       getAuth,
@@ -82,8 +114,8 @@
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-    // REEMPLAZA con TU configuración de Firebase
-    const firebaseConfig = {
+    // Pega aquí tu configuración real de Firebase
+   const firebaseConfig = {
   apiKey: "AIzaSyDz0gGjx6Rw01MJ-s4hZC5DwYuGymeOL44",
   authDomain: "acuarela-e4613.firebaseapp.com",
   projectId: "acuarela-e4613",
@@ -93,16 +125,14 @@
   measurementId: "G-KMJW7RZRTT"
 };
 
-    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // Exponer funciones a la ventana para usarlas en onclick
+    // Botón Google
     window.googleLogin = async () => {
       try {
         await signInWithPopup(auth, provider);
-        // Redirige al curso al iniciar
         window.location.href = "curso.html";
       } catch (e) {
         alert("No se pudo iniciar con Google: " + e.message);
@@ -110,13 +140,13 @@
       }
     };
 
+    // Salir
     window.appLogout = async () => {
       await signOut(auth);
-      // Opcional: volver al inicio
       window.location.href = "index.html";
     };
 
-    // Manejo de formularios
+    // Formularios
     document.addEventListener("DOMContentLoaded", () => {
       const loginForm = document.getElementById("loginForm");
       const registerForm = document.getElementById("registerForm");
@@ -161,11 +191,10 @@
       }
     });
 
-    // Actualizar UI según estado de sesión
+    // Estado de sesión -> muestra botón Salir y guarda datos mínimos
     onAuthStateChanged(auth, (user) => {
       const btnLogout = document.getElementById("btnLogout");
       if (user) {
-        // Guardar sesión mínima en localStorage (opcional)
         localStorage.setItem("user", JSON.stringify({
           uid: user.uid,
           email: user.email,
