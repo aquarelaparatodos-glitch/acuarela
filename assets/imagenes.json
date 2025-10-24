@@ -1,1 +1,6 @@
-
+[
+  { "title": "Icono 1", "src": "icono 1.PNG" },
+  { "title": "Icono 2", "src": "icono 2.PNG" },
+  { "title": "Icono 3", "src": "icono 3.PNG" },
+  { "title": "Icono 4", "src": "icono 4.PNG" }
+]
