@@ -8,9 +8,12 @@
   <style>
     body.locked { visibility: hidden; }
     .media-wrapper { margin-top: 1rem; }
-    .media-wrapper .card { overflow: hidden; }
-    .ratio { background: #000; }
-    .embed-small { margin-top: .75rem; }
+    .card .ratio { background: #000; }
+    .small-muted { font-size: .9rem; color: #6c757d; }
+    .podcast-box { display:flex; flex-direction:column; gap:.5rem; }
+    .podcast-desc { margin-bottom: 0.25rem; }
+    .podcast-actions { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+    .podcast-transcript { font-size:.9rem; color:#6c757d; }
   </style>
 </head>
 <body class="locked">
@@ -26,45 +29,63 @@
 
   <main class="container py-4">
     <h1 class="h3 mb-3">Acuarela Básica</h1>
-    <p>Bienvenid@ al contenido del curso. Primero verás el video y luego el material interactivo de la Lección 1; en la Lección 2 está el segundo embed que solicitaste.</p>
+    <p>Bienvenid@ al curso. Te recomendamos escuchar el primer podcast antes de continuar: te explica cómo funcionará el curso y qué esperar.</p>
 
     <div class="media-wrapper">
-      <!-- VIDEO (Dropbox) -->
-      <div id="videoCard" class="card mb-4 d-none">
+      <!-- BIENVENIDA: podcast + video + primer embed -->
+      <div id="welcomeCard" class="card mb-4 d-none">
         <div class="card-body">
-          <h5 class="card-title">Video: Lección 1</h5>
-          <div id="videoContainer" class="ratio ratio-16x9"></div>
-          <p class="small text-muted mt-2"></p>
+          <h5 class="card-title">Bienvenida</h5>
+
+          <!-- Podcast -->
+          <div class="podcast-box mb-3">
+            <p class="podcast-desc mb-0">Escucha el podcast 1 — "Cómo funcionará este curso" (3–10 min). Te ayudará a entender la estructura y cómo aprovechar al máximo las lecciones.</p>
+            <div class="podcast-actions">
+              <audio id="welcomePodcast" controls preload="none" style="width:100%">
+                <!-- Reemplaza la URL por la real del podcast (por ejemplo Dropbox dl=1 o un .mp3 público) -->
+                <source src="" type="audio/mpeg" id="podcastSource" />
+                Tu navegador no soporta el elemento audio.
+              </audio>
+              <a id="openPodcastNewTab" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener">Abrir en nueva pestaña</a>
+            </div>
+            <p class="podcast-transcript mb-0">Si quieres, sube la transcripción y la enlazo aquí para quien prefiera leer.</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <div class="ratio ratio-16x9 mb-2" id="welcomeVideoContainer"></div>
+              <p class="small-muted">Video de bienvenida.</p>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="ratio ratio-16x9 mb-2" id="welcomeEmbedContainer"></div>
+              <p class="small-muted">Material introductorio: Desmitificando el Color.</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- IFRAME Lección 1 (Gamma) -->
-      <div id="embedCard1" class="card mb-4 d-none">
+      <!-- LECCIÓN 1 -->
+      <div id="lesson1Card" class="card mb-4 d-none">
         <div class="card-body">
-          <h5 class="card-title">Material interactivo: Desmitificando el Color</h5>
-          <div id="embedContainer1" class="ratio ratio-16x9"></div>
-          <p class="small text-muted mt-2"></p>
+          <h5 class="card-title">Lección 1 — Materiales y preparación</h5>
+          <div class="ratio ratio-16x9 mb-2" id="lesson1VideoContainer"></div>
+          <p class="small-muted">Video: Kit de Inicio.</p>
+        </div>
+      </div>
+
+      <!-- LECCIÓN 2 -->
+      <div id="lesson2Card" class="card mb-4 d-none">
+        <div class="card-body">
+          <h5 class="card-title">Lección 2 — Técnicas básicas</h5>
+          <div class="ratio ratio-16x9 mb-2" id="lesson2EmbedContainer"></div>
+          <p class="small-muted">Material interactivo: Guía rápida de técnicas.</p>
         </div>
       </div>
     </div>
 
-    <section id="courseMaterials" class="mt-4">
-      <h2>Lección 1: Materiales y preparación</h2>
-      <p>Introducción a los materiales, papeles, pinceles y paletas.</p>
-
-      <h2 class="mt-4">Lección 2: Técnicas básicas</h2>
-      <p>Aprende degradados, lavados y más.</p>
-
-      <!-- Aquí irá el iframe de la Lección 2 -->
-      <div id="embedLesson2" class="embed-small d-none">
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-title mb-3">Material interactivo: Guía rápida de técnicas</h6>
-            <div id="embedContainer2" class="ratio ratio-16x9"></div>
-            <p class="small text-muted mt-2"></p>
-          </div>
-        </div>
-      </div>
+    <section id="moreMaterials" class="mt-4">
+      <h2>Material complementario</h2>
+      <p>Aquí puedes añadir PDFs, hojas de trabajo, etc.</p>
     </section>
   </main>
 
@@ -74,7 +95,7 @@
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     // ---------- CONFIGURA ESTO ----------
-const firebaseConfig = {
+   const firebaseConfig = {
   apiKey: "AIzaSyDz0gGjx6Rw01MJ-s4hZC5DwYuGymeOL44",
   authDomain: "acuarela-e4613.firebaseapp.com",
   projectId: "acuarela-e4613",
@@ -86,24 +107,33 @@ const firebaseConfig = {
 
     const ADMIN_UID = "cOwdzdTzzkWXQCJDrDU8bV3Xmev1";           // <- UID del admin
     const COURSE_ID = "VCFE0H5Yj31YRL1UyF85";          // <- ID del curso en Firestore
-    // Dropbox: usar dl=1 para enlace directo
-    const DROPBOX_VIDEO_URL = "https://www.dropbox.com/scl/fi/mayp3qmeh35yi3zvg7huu/Acuarela_Bot-nica__La_Gu-a.mp4?dl=1";
-    // Embed Gamma para la Lección 1 (ya tenías)
-    const EMBED_IFRAME_SRC_1 = "https://gamma.app/embed/26qarv5k50zcsw2";
-    // Embed Gamma para la Lección 2 (nuevo)
-    const EMBED_IFRAME_SRC_2 = "https://gamma.app/embed/txnyn8mn0pdndhm";
+
+    // Enlaces/embeds:
+    // Reemplaza la siguiente URL por la del archivo .mp3 del podcast (ej. Dropbox con dl=1)
+    const WELCOME_PODCAST_URL = ""; // <-- PON AQUÍ LA URL DEL PODCAST (ej. "https://www.dropbox.com/s/miPodcast.mp3?dl=1")
+    const WELCOME_VIDEO_URL = "https://www.dropbox.com/scl/fi/mayp3qmeh35yi3zvg7huu/Acuarela_Bot-nica__La_Gu-a.mp4?dl=1";
+    const EMBED_IFRAME_SRC_1 = "https://gamma.app/embed/26qarv5k50zcsw2"; // primer Gamma (intro)
+    const LESSON1_VIDEO_URL = "https://www.dropbox.com/scl/fi/nzjiyola4j65ztgktelyi/Acuarela__Kit_de_Inicio.mp4?dl=1"; // kit de inicio (Lección 1)
+    const EMBED_IFRAME_SRC_2 = "https://gamma.app/embed/txnyn8mn0pdndhm"; // segundo Gamma (Lección 2)
     // -------------------------------------
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const videoContainer = document.getElementById("videoContainer");
-    const embedContainer1 = document.getElementById("embedContainer1");
-    const embedContainer2 = document.getElementById("embedContainer2");
-    const videoCard = document.getElementById("videoCard");
-    const embedCard1 = document.getElementById("embedCard1");
-    const embedLesson2 = document.getElementById("embedLesson2");
+    const welcomeCard = document.getElementById("welcomeCard");
+    const welcomeVideoContainer = document.getElementById("welcomeVideoContainer");
+    const welcomeEmbedContainer = document.getElementById("welcomeEmbedContainer");
+    const podcastSource = document.getElementById("podcastSource");
+    const welcomePodcast = document.getElementById("welcomePodcast");
+    const openPodcastNewTab = document.getElementById("openPodcastNewTab");
+
+    const lesson1Card = document.getElementById("lesson1Card");
+    const lesson1VideoContainer = document.getElementById("lesson1VideoContainer");
+
+    const lesson2Card = document.getElementById("lesson2Card");
+    const lesson2EmbedContainer = document.getElementById("lesson2EmbedContainer");
+
     const btnLogout = document.getElementById("btnLogout");
 
     onAuthStateChanged(auth, async (user) => {
@@ -114,9 +144,9 @@ const firebaseConfig = {
       btnLogout.classList.remove("d-none");
 
       try {
-        // Admin: acceso automático
+        // Si es admin, mostrar todo sin verificar accessCourses
         if (user.uid === ADMIN_UID) {
-          renderAllMedia();
+          renderAll();
           unlockPage();
           return;
         }
@@ -130,8 +160,8 @@ const firebaseConfig = {
           return;
         }
 
-        // Si tiene acceso -> mostrar media
-        renderAllMedia();
+        // Usuario con acceso -> mostrar todo
+        renderAll();
         unlockPage();
       } catch (err) {
         console.error("Error verificando acceso:", err);
@@ -139,28 +169,40 @@ const firebaseConfig = {
       }
     });
 
-    function renderAllMedia() {
-      // 1) Insertar video (Dropbox)
+    function renderAll() {
+      // PODCAST: configurar fuente y botón abrir
       try {
-        videoContainer.innerHTML = `
+        if (WELCOME_PODCAST_URL && podcastSource) {
+          podcastSource.src = WELCOME_PODCAST_URL;
+          welcomePodcast.load();
+          openPodcastNewTab.href = WELCOME_PODCAST_URL;
+        } else {
+          // Si no hay podcast, ocultar el audio y mostrar nota
+          welcomePodcast.parentElement.innerHTML = '<div class="text-muted small">Podcast no configurado. Sube el archivo y pon la URL en WELCOME_PODCAST_URL.</div>';
+          openPodcastNewTab.classList.add('d-none');
+        }
+      } catch (e) {
+        console.error("Error configurando podcast:", e);
+      }
+
+      // Bienvenida: video + primer embed
+      try {
+        welcomeVideoContainer.innerHTML = `
           <video controls controlsList="nodownload" style="width:100%;height:100%">
-            <source src="${DROPBOX_VIDEO_URL}" type="video/mp4" />
+            <source src="${WELCOME_VIDEO_URL}" type="video/mp4" />
             Tu navegador no soporta el elemento video.
           </video>
         `;
-        videoCard.classList.remove("d-none");
       } catch (e) {
-        console.error("Error insertando video:", e);
-        videoContainer.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el video.</div>`;
-        videoCard.classList.remove("d-none");
+        console.error("Error welcome video:", e);
+        welcomeVideoContainer.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el video de bienvenida.</div>`;
       }
 
-      // 2) Insertar iframe (Gamma) Lección 1
       try {
-        embedContainer1.innerHTML = `
+        welcomeEmbedContainer.innerHTML = `
           <iframe
             src="${EMBED_IFRAME_SRC_1}"
-            title="Desmitificando el Color: Una Guía del Círculo Cromático para Acuarelistas"
+            title="Desmitificando el Color"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             loading="lazy"
             referrerpolicy="no-referrer"
@@ -168,19 +210,33 @@ const firebaseConfig = {
             allowfullscreen>
           </iframe>
         `;
-        embedCard1.classList.remove("d-none");
       } catch (e) {
-        console.error("Error insertando iframe 1:", e);
-        embedContainer1.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el material embebido (Lección 1).</div>`;
-        embedCard1.classList.remove("d-none");
+        console.error("Error welcome embed:", e);
+        welcomeEmbedContainer.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el material introductorio.</div>`;
       }
 
-      // 3) Insertar iframe (Gamma) Lección 2 - donde pediste
+      welcomeCard.classList.remove("d-none");
+
+      // Lección 1: video Kit de Inicio
       try {
-        embedContainer2.innerHTML = `
+        lesson1VideoContainer.innerHTML = `
+          <video controls controlsList="nodownload" style="width:100%;height:100%">
+            <source src="${LESSON1_VIDEO_URL}" type="video/mp4" />
+            Tu navegador no soporta el elemento video.
+          </video>
+        `;
+      } catch (e) {
+        console.error("Error lesson1 video:", e);
+        lesson1VideoContainer.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el video de la Lección 1.</div>`;
+      }
+      lesson1Card.classList.remove("d-none");
+
+      // Lección 2: segundo embed
+      try {
+        lesson2EmbedContainer.innerHTML = `
           <iframe
             src="${EMBED_IFRAME_SRC_2}"
-            title="Guía Rápida de Técnicas Fundamentales de Acuarela para Principiantes"
+            title="Guía Rápida de Técnicas Fundamentales de Acuarela"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             loading="lazy"
             referrerpolicy="no-referrer"
@@ -188,16 +244,15 @@ const firebaseConfig = {
             allowfullscreen>
           </iframe>
         `;
-        embedLesson2.classList.remove("d-none");
       } catch (e) {
-        console.error("Error insertando iframe 2:", e);
-        embedContainer2.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el material embebido (Lección 2).</div>`;
-        embedLesson2.classList.remove("d-none");
+        console.error("Error lesson2 embed:", e);
+        lesson2EmbedContainer.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el material de la Lección 2.</div>`;
       }
+      lesson2Card.classList.remove("d-none");
 
-      // Opcional: desplazar suavemente al video
+      // Opcional: desplazar al inicio del contenido
       setTimeout(() => {
-        const top = videoCard.getBoundingClientRect().top + window.scrollY - 80;
+        const top = welcomeCard.getBoundingClientRect().top + window.scrollY - 80;
         window.scrollTo({ top, behavior: "smooth" });
       }, 200);
     }
@@ -218,4 +273,3 @@ const firebaseConfig = {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
