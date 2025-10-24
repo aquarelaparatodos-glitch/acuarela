@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - Órdenes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <h1 class="h4 mb-3">Panel de Órdenes</h1>
+    <div id="adminInfo" class="alert alert-warning small">
+      Acceso restringido. Inicia sesión con tu cuenta admin.
+    </div>
+
+    <div class="d-flex gap-2 mb-3">
+      <a href="index.html" class="btn btn-outline-secondary btn-sm">Inicio</a>
+      <button id="btnReload" class="btn btn-outline-primary btn-sm d-none">Recargar</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Orden</th>
+            <th>Usuario</th>
+            <th>Curso</th>
+            <th>Monto</th>
+            <th>Comprobante</th>
+            <th>Estado</th>
+            <th>Creación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      getFirestore, collection, getDocs, doc, updateDoc, getDoc, setDoc, arrayUnion, query, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // CONFIGURA ESTO
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_AUTH_DOMAIN",
+      projectId: "TU_PROJECT_ID",
+      appId: "TU_APP_ID"
+    };
+    const ADMIN_UID = "PEGAR_UID_ADMIN_AQUI";     // tu UID
+    const COURSE_ID  = "curso_unico";             // debe coincidir con el que usas en curso/mis-cursos
+    const COURSE_NAME= "Acuarela Básica";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
+
+    const adminInfo = document.getElementById('adminInfo');
+    const ordersBody = document.getElementById('ordersBody');
+    const btnReload = document.getElementById('btnReload');
+
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user){
+        adminInfo.className = "alert alert-warning small";
+        adminInfo.innerHTML = `
+          Debes iniciar sesión como administrador para continuar.
+          <button id="btnLogin" class="btn btn-sm btn-primary ms-2">Iniciar con Google</button>`;
+        document.getElementById('btnLogin').onclick = async () => {
+          await signInWithPopup(auth, provider);
+        };
+        return;
+      }
+      if(user.uid !== ADMIN_UID){
+        adminInfo.className = "alert alert-danger small";
+        adminInfo.textContent = "Acceso denegado: no eres administrador.";
+        return;
+      }
+      adminInfo.className = "alert alert-success small";
+      adminInfo.textContent = `Admin conectado: ${user.email}`;
+      btnReload.classList.remove('d-none');
+      await loadOrders();
+    });
+
+    btnReload.addEventListener('click', loadOrders);
+
+    async function loadOrders(){
+      ordersBody.innerHTML = `<tr><td colspan="8" class="text-muted">Cargando…</td></tr>`;
+      const q = query(collection(db, 'orders'), orderBy('createdAt','desc'));
+      const snap = await getDocs(q);
+      const rows = [];
+      snap.forEach(d=>{
+        const o = d.data();
+        rows.push(`
+          <tr data-id="${d.id}" data-uid="${o.uid}" data-course="${o.courseId}">
+            <td class="small">${d.id}</td>
+            <td class="small">${o.email || o.uid}</td>
+            <td>${o.courseName || '-'}</td>
+            <td>CLP $${Number(o.price||0).toLocaleString('es-CL')}</td>
+            <td>${o.receiptUrl ? `<a href="${o.receiptUrl}" target="_blank">Ver</a>` : '-'}</td>
+            <td>
+              <span class="badge bg-${o.status==='approved'?'success':o.status==='rejected'?'danger':'warning'}">
+                ${o.status || 'pending'}
+              </span>
+            </td>
+            <td class="small">${o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString() : '-'}</td>
+            <td class="d-flex gap-2">
+              <button class="btn btn-success btn-sm btn-approve">Aprobar</button>
+              <button class="btn btn-danger btn-sm btn-reject">Rechazar</button>
+            </td>
+          </tr>
+        `);
+      });
+      ordersBody.innerHTML = rows.join('') || `<tr><td colspan="8" class="text-muted">Sin órdenes</td></tr>`;
+
+      ordersBody.querySelectorAll('.btn-approve').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+          const tr = btn.closest('tr');
+          await approveOrder(tr.dataset.id, tr.dataset.uid, tr.dataset.course);
+          btn.closest('tr').querySelector('.badge').className = 'badge bg-success';
+          btn.closest('tr').querySelector('.badge').textContent = 'approved';
+        });
+      });
+      ordersBody.querySelectorAll('.btn-reject').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+          const tr = btn.closest('tr');
+          await updateDoc(doc(db,'orders', tr.dataset.id), { status:'rejected' });
+          tr.querySelector('.badge').className = 'badge bg-danger';
+          tr.querySelector('.badge').textContent = 'rejected';
+        });
+      });
+    }
+
+    async function approveOrder(orderId, uid, courseIdInOrder){
+      const targetCourseId = courseIdInOrder || COURSE_ID;
+      // 1) marcar orden aprobada
+      await updateDoc(doc(db,'orders', orderId), { status:'approved' });
+
+      // 2) dar acceso al curso
+      const userRef = doc(db,'users', uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()){
+        await updateDoc(userRef, { accessCourses: arrayUnion(targetCourseId) });
+      } else {
+        await setDoc(userRef, { accessCourses: [targetCourseId] });
+      }
+
+      // 3) opcional: sincronizar nombre para consistencia
+      if (COURSE_NAME && targetCourseId === COURSE_ID) {
+        // nada crítico; lo importante es el ID en accessCourses
+      }
+
+      alert(`Orden aprobada y acceso otorgado (${targetCourseId}).`);
+    }
+  </script>
+</body>
+</html>
