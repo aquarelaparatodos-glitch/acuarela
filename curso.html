@@ -11,9 +11,8 @@
     .card .ratio { background: #000; }
     .small-muted { font-size: .9rem; color: #6c757d; }
     .podcast-box { display:flex; flex-direction:column; gap:.5rem; }
-    .podcast-desc { margin-bottom: 0.25rem; }
     .podcast-actions { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
-    .podcast-transcript { font-size:.9rem; color:#6c757d; }
+    .admin-edit { margin-top: .75rem; }
   </style>
 </head>
 <body class="locked">
@@ -29,7 +28,7 @@
 
   <main class="container py-4">
     <h1 class="h3 mb-3">Acuarela Básica</h1>
-    <p>Bienvenid@ al curso. Te recomendamos escuchar el primer podcast antes de continuar: te explica cómo funcionará el curso y qué esperar.</p>
+    <p>Bienvenid@ al curso. Antes de comenzar, te recomendamos escuchar el primer podcast (explica cómo funcionará el curso).</p>
 
     <div class="media-wrapper">
       <!-- BIENVENIDA: podcast + video + primer embed -->
@@ -39,16 +38,26 @@
 
           <!-- Podcast -->
           <div class="podcast-box mb-3">
-            <p class="podcast-desc mb-0">Escucha el podcast 1 — "Cómo funcionará este curso" (3–10 min). Te ayudará a entender la estructura y cómo aprovechar al máximo las lecciones.</p>
+            <p class="podcast-desc mb-0">Escucha el podcast 1 — "Cómo funcionará este curso" (3–10 min).</p>
             <div class="podcast-actions">
               <audio id="welcomePodcast" controls preload="none" style="width:100%">
-                <!-- Reemplaza la URL por la real del podcast (por ejemplo Dropbox dl=1 o un .mp3 público) -->
                 <source src="" type="audio/mpeg" id="podcastSource" />
                 Tu navegador no soporta el elemento audio.
               </audio>
               <a id="openPodcastNewTab" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener">Abrir en nueva pestaña</a>
             </div>
-            <p class="podcast-transcript mb-0">Si quieres, sube la transcripción y la enlazo aquí para quien prefiera leer.</p>
+
+            <!-- Admin: editar podcast -->
+            <div id="adminPodcastEdit" class="admin-edit d-none">
+              <label for="podcastUrlInput" class="form-label small mb-1">Pegar URL del podcast (.mp3/.m4a pública)</label>
+              <div class="d-flex gap-2">
+                <input id="podcastUrlInput" class="form-control form-control-sm" placeholder="https://... ?dl=1" />
+                <button id="savePodcastBtn" class="btn btn-sm btn-primary">Guardar podcast</button>
+              </div>
+              <div id="savePodcastMsg" class="small text-muted mt-1"></div>
+            </div>
+
+            <p class="podcast-transcript mb-0 small-muted">Si quieres, sube la transcripción y la enlazo aquí para quien prefiera leer.</p>
           </div>
 
           <div class="row g-3">
@@ -92,7 +101,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     // ---------- CONFIGURA ESTO ----------
    const firebaseConfig = {
@@ -108,13 +117,11 @@
     const ADMIN_UID = "cOwdzdTzzkWXQCJDrDU8bV3Xmev1";           // <- UID del admin
     const COURSE_ID = "VCFE0H5Yj31YRL1UyF85";          // <- ID del curso en Firestore
 
-    // Enlaces/embeds:
-    // Reemplaza la siguiente URL por la del archivo .mp3 del podcast (ej. Dropbox con dl=1)
-    const WELCOME_PODCAST_URL = ""; // <-- PON AQUÍ LA URL DEL PODCAST (ej. "https://www.dropbox.com/s/miPodcast.mp3?dl=1")
+    // Enlaces/embeds fijos:
     const WELCOME_VIDEO_URL = "https://www.dropbox.com/scl/fi/mayp3qmeh35yi3zvg7huu/Acuarela_Bot-nica__La_Gu-a.mp4?dl=1";
-    const EMBED_IFRAME_SRC_1 = "https://gamma.app/embed/26qarv5k50zcsw2"; // primer Gamma (intro)
-    const LESSON1_VIDEO_URL = "https://www.dropbox.com/scl/fi/nzjiyola4j65ztgktelyi/Acuarela__Kit_de_Inicio.mp4?dl=1"; // kit de inicio (Lección 1)
-    const EMBED_IFRAME_SRC_2 = "https://gamma.app/embed/txnyn8mn0pdndhm"; // segundo Gamma (Lección 2)
+    const EMBED_IFRAME_SRC_1 = "https://gamma.app/embed/26qarv5k50zcsw2";
+    const LESSON1_VIDEO_URL = "https://www.dropbox.com/scl/fi/nzjiyola4j65ztgktelyi/Acuarela__Kit_de_Inicio.mp4?dl=1";
+    const EMBED_IFRAME_SRC_2 = "https://gamma.app/embed/txnyn8mn0pdndhm";
     // -------------------------------------
 
     const app = initializeApp(firebaseConfig);
@@ -127,6 +134,10 @@
     const podcastSource = document.getElementById("podcastSource");
     const welcomePodcast = document.getElementById("welcomePodcast");
     const openPodcastNewTab = document.getElementById("openPodcastNewTab");
+    const adminPodcastEdit = document.getElementById("adminPodcastEdit");
+    const podcastUrlInput = document.getElementById("podcastUrlInput");
+    const savePodcastBtn = document.getElementById("savePodcastBtn");
+    const savePodcastMsg = document.getElementById("savePodcastMsg");
 
     const lesson1Card = document.getElementById("lesson1Card");
     const lesson1VideoContainer = document.getElementById("lesson1VideoContainer");
@@ -136,6 +147,9 @@
 
     const btnLogout = document.getElementById("btnLogout");
 
+    let courseDocRef = doc(db, "courses", COURSE_ID);
+    let courseData = null;
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         location.href = "index.html";
@@ -144,8 +158,17 @@
       btnLogout.classList.remove("d-none");
 
       try {
-        // Si es admin, mostrar todo sin verificar accessCourses
+        // Cargar datos del curso (incluye welcomePodcastUrl si existe)
+        const cSnap = await getDoc(courseDocRef);
+        courseData = cSnap.exists() ? cSnap.data() : {};
+
+        // Si es admin, mostrar UI de edición del podcast
         if (user.uid === ADMIN_UID) {
+          adminPodcastEdit.classList.remove("d-none");
+          podcastUrlInput.value = courseData?.welcomePodcastUrl || ""; // si ya existe, cargarla
+          // Permitir al admin editar y guardar
+          savePodcastBtn.addEventListener("click", onSavePodcast);
+          // Mostrar contenido igual que a usuarios
           renderAll();
           unlockPage();
           return;
@@ -164,21 +187,53 @@
         renderAll();
         unlockPage();
       } catch (err) {
-        console.error("Error verificando acceso:", err);
-        alert("Error verificando acceso. Revisa la consola.");
+        console.error("Error verificando acceso o cargando curso:", err);
+        alert("Error verificando acceso o cargando datos. Revisa la consola.");
       }
     });
 
-    function renderAll() {
-      // PODCAST: configurar fuente y botón abrir
+    async function onSavePodcast() {
+      const url = podcastUrlInput.value.trim();
+      savePodcastMsg.textContent = "";
+      if (!url) {
+        savePodcastMsg.textContent = "Pega una URL válida antes de guardar.";
+        return;
+      }
+      savePodcastBtn.disabled = true;
+      savePodcastBtn.textContent = "Guardando...";
       try {
-        if (WELCOME_PODCAST_URL && podcastSource) {
-          podcastSource.src = WELCOME_PODCAST_URL;
-          welcomePodcast.load();
-          openPodcastNewTab.href = WELCOME_PODCAST_URL;
+        // Intentar update; si no existe doc, crear
+        if (courseData && Object.keys(courseData).length > 0) {
+          await updateDoc(courseDocRef, { welcomePodcastUrl: url });
         } else {
-          // Si no hay podcast, ocultar el audio y mostrar nota
-          welcomePodcast.parentElement.innerHTML = '<div class="text-muted small">Podcast no configurado. Sube el archivo y pon la URL en WELCOME_PODCAST_URL.</div>';
+          await setDoc(courseDocRef, { welcomePodcastUrl: url }, { merge: true });
+        }
+        courseData = { ...(courseData || {}), welcomePodcastUrl: url };
+        // Actualizar player y enlace
+        podcastSource.src = url;
+        welcomePodcast.load();
+        openPodcastNewTab.href = url;
+        savePodcastMsg.textContent = "Podcast guardado correctamente.";
+      } catch (err) {
+        console.error("Error guardando podcast en Firestore:", err);
+        savePodcastMsg.textContent = "Error al guardar. Revisa permisos y reglas de Firestore.";
+      } finally {
+        savePodcastBtn.disabled = false;
+        savePodcastBtn.textContent = "Guardar podcast";
+      }
+    }
+
+    function renderAll() {
+      // PODCAST: preferir la URL guardada en courseData
+      try {
+        const podcastUrl = courseData?.welcomePodcastUrl || "";
+        if (podcastUrl) {
+          podcastSource.src = podcastUrl;
+          welcomePodcast.load();
+          openPodcastNewTab.href = podcastUrl;
+        } else {
+          // si no hay url, mostrar mensaje
+          welcomePodcast.parentElement.innerHTML = '<div class="text-muted small">Podcast no configurado. Admin puede pegar la URL desde su cuenta.</div>';
           openPodcastNewTab.classList.add('d-none');
         }
       } catch (e) {
@@ -249,12 +304,6 @@
         lesson2EmbedContainer.innerHTML = `<div class="p-3 text-danger small">No se pudo cargar el material de la Lección 2.</div>`;
       }
       lesson2Card.classList.remove("d-none");
-
-      // Opcional: desplazar al inicio del contenido
-      setTimeout(() => {
-        const top = welcomeCard.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }, 200);
     }
 
     function unlockPage() {
