@@ -38,7 +38,7 @@
 
           <!-- Podcast -->
           <div class="podcast-box mb-3">
-            <p class="podcast-desc mb-0">Escucha el podcast 1 — "Cómo funcionará este curso" (3–10 min).</p>
+            <p class="podcast-desc mb-0">Escucha el podcast 1 — "Cómo funcionará este curso".</p>
             <div class="podcast-actions">
               <audio id="welcomePodcast" controls preload="none" style="width:100%">
                 <source src="" type="audio/mpeg" id="podcastSource" />
@@ -117,6 +117,9 @@
     const ADMIN_UID = "cOwdzdTzzkWXQCJDrDU8bV3Xmev1";           // <- UID del admin
     const COURSE_ID = "VCFE0H5Yj31YRL1UyF85";          // <- ID del curso en Firestore
 
+    // URL por defecto del podcast (YA PEGADA, dl=1)
+    const DEFAULT_WELCOME_PODCAST_URL = "https://www.dropbox.com/scl/fi/2efhsp31mkiw20dhwgkp5/Acuarela_Bot-nica__De_Detective_de_la_Naturaleza_a_Maestro_del_.m4a?rlkey=ec8hnfi3z0xiptfcxg8mwf0m9&st=57zcf0uv&dl=1";
+
     // Enlaces/embeds fijos:
     const WELCOME_VIDEO_URL = "https://www.dropbox.com/scl/fi/mayp3qmeh35yi3zvg7huu/Acuarela_Bot-nica__La_Gu-a.mp4?dl=1";
     const EMBED_IFRAME_SRC_1 = "https://gamma.app/embed/26qarv5k50zcsw2";
@@ -165,7 +168,8 @@
         // Si es admin, mostrar UI de edición del podcast
         if (user.uid === ADMIN_UID) {
           adminPodcastEdit.classList.remove("d-none");
-          podcastUrlInput.value = courseData?.welcomePodcastUrl || ""; // si ya existe, cargarla
+          // Si Firestore tiene URL la carga, sino usar la DEFAULT pegada
+          podcastUrlInput.value = courseData?.welcomePodcastUrl || DEFAULT_WELCOME_PODCAST_URL;
           // Permitir al admin editar y guardar
           savePodcastBtn.addEventListener("click", onSavePodcast);
           // Mostrar contenido igual que a usuarios
@@ -224,9 +228,9 @@
     }
 
     function renderAll() {
-      // PODCAST: preferir la URL guardada en courseData
+      // PODCAST: preferir la URL guardada en courseData, sino usar DEFAULT_WELCOME_PODCAST_URL
       try {
-        const podcastUrl = courseData?.welcomePodcastUrl || "";
+        const podcastUrl = courseData?.welcomePodcastUrl || DEFAULT_WELCOME_PODCAST_URL;
         if (podcastUrl) {
           podcastSource.src = podcastUrl;
           welcomePodcast.load();
