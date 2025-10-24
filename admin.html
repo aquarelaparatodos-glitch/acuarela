@@ -62,22 +62,18 @@
       orderBy
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // Configura con tus datos reales
-    const firebaseConfig = {
-      apiKey: "AIzaSyDz0gGjx6Rw01MJ-s4hZC5DwYuGymeOL44",
-      authDomain: "acuarela-e4613.firebaseapp.com",
-      projectId: "acuarela-e4613",
-      storageBucket: "acuarela-e4613.appspot.com",
-      messagingSenderId: "319613648205",
-      appId: "1:319613648205:web:f693e3f4e1b9abd4aa0b04",
-      measurementId: "G-KMJW7RZRTT"
-    };
+  const firebaseConfig = {
+  apiKey: "AIzaSyDz0gGjx6Rw01MJ-s4hZC5DwYuGymeOL44",
+  authDomain: "acuarela-e4613.firebaseapp.com",
+  projectId: "acuarela-e4613",
+  storageBucket: "acuarela-e4613.firebasestorage.app",
+  messagingSenderId: "319613648205",
+  appId: "1:319613648205:web:f693e3f4e1b9abd4aa0b04",
+  measurementId: "G-KMJW7RZRTT"
+};
 
-    // Pega aquí tu UID de administrador
     const ADMIN_UID = "cOwdzdTzzkWXQCJDrDU8bV3Xmev1";
-
-    // ID del curso que otorgarás acceso
-    const COURSE_ID = "VCFEOH5Yj31YRL1UyF85";
+    const COURSE_ID = "VCFE0H5Yj31YRL1UyF85";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -88,16 +84,10 @@
     const ordersBody = document.getElementById("ordersBody");
     const btnReload = document.getElementById("btnReload");
     const btnLogout = document.getElementById("btnLogout");
-    const btnLogin = document.getElementById("btnLogin");
 
-    let currentUser = null;
-
-    // Manejar resultado del redirect (al cargar la página)
     getRedirectResult(auth)
       .then((result) => {
         if (result) {
-          // Usuario logueado con éxito
-          console.log("Usuario logueado:", result.user);
           location.reload();
         }
       })
@@ -105,10 +95,8 @@
         console.error("Error en login redirect:", error);
       });
 
-    // Escuchar cambios de autenticación
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // No logueado: mostrar botón login
         adminInfo.className = "alert alert-warning small";
         adminInfo.innerHTML = `
           Debes iniciar sesión como administrador para continuar.
@@ -123,7 +111,6 @@
         return;
       }
 
-      // Logueado: verificar si es admin
       if (user.uid !== ADMIN_UID) {
         adminInfo.className = "alert alert-danger small";
         adminInfo.textContent = "Acceso denegado: no eres administrador.";
@@ -133,8 +120,6 @@
         return;
       }
 
-      // Es admin
-      currentUser = user;
       adminInfo.className = "alert alert-success small";
       adminInfo.textContent = `Admin conectado: ${user.email}`;
       btnReload.classList.remove("d-none");
@@ -237,4 +222,3 @@
   </script>
 </body>
 </html>
-
