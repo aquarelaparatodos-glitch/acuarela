@@ -1,112 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Curso de Acuarela | Imágenes para colorear</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Imágenes para Descargar</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
-<body data-page="imagenes">
-  <header class="header">
-    <nav class="nav">
-      <div class="brand">
-        <div class="brand-badge"></div>
-        <span>Curso de Acuarela</span>
-      </div>
-      <div class="nav-links">
-        <a href="index.html" data-page="home">Inicio</a>
-        <a href="curso.html" data-page="curso">Curso</a>
-        <a href="imagenes.html" data-page="imagenes">Imágenes</a>
-        <a href="calendario.html" data-page="calendario">Calendario</a>
-        <span id="navUser" style="margin-left:8px;color:#444"></span>
-        <button id="btnLogout" class="btn secondary">Salir</button>
-      </div>
-    </nav>
+<body>
+  <!-- Navbar (ajústalo si tu index usa otro) -->
+  <header class="navbar">
+    <div class="container">
+      <a class="brand" href="index.html">Acuarela</a>
+      <nav>
+        <a href="index.html">Inicio</a>
+        <a href="curso.html">Curso</a>
+        <a href="imagenes.html" class="active">Imágenes</a>
+        <a href="calendario.html">Calendario</a>
+        <button id="btnLogout" class="btn btnLight">Salir</button>
+      </nav>
+    </div>
   </header>
 
-  <main class="container">
-    <section class="card">
-      <h1>Colorea con un clic</h1>
-      <p class="lead">Elige un color de la paleta y haz clic en las zonas para pintar. Puedes descargar tu obra como PNG.</p>
-      <div class="palette" style="margin:10px 0 6px">
-        <div class="swatch" data-color="#7a5cff" style="background:#7a5cff"></div>
-        <div class="swatch" data-color="#00b3b3" style="background:#00b3b3"></div>
-        <div class="swatch" data-color="#ff7aa2" style="background:#ff7aa2"></div>
-        <div class="swatch" data-color="#ffd166" style="background:#ffd166"></div>
-        <div class="swatch" data-color="#06d6a0" style="background:#06d6a0"></div>
-        <div class="swatch" data-color="#118ab2" style="background:#118ab2"></div>
-        <div class="swatch" data-color="#ef476f" style="background:#ef476f"></div>
-        <div class="swatch" data-color="#8338ec" style="background:#8338ec"></div>
-        <div class="swatch" data-color="#3a86ff" style="background:#3a86ff"></div>
-        <div class="swatch" data-color="#ffbe0b" style="background:#ffbe0b"></div>
-      </div>
-    </section>
+  <main class="container" style="padding-top:24px;">
+    <h1>Imágenes PNG para descargar</h1>
+    <p>Puedes hacer clic en la miniatura para abrirla grande o usar el botón para descargarla.</p>
 
-    <section class="coloring-grid" style="margin-top:16px">
-      <!-- FLOR -->
-      <div class="coloring-card">
-        <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:6px;">
-          <strong>Flor</strong>
-          <button class="btn btnDownload">Descargar PNG</button>
-        </div>
-        <svg data-paint-id="flor" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; background:#fff; border-radius:12px; border:1px solid #ddd">
-          <rect width="300" height="300" fill="#ffffff"/>
-          <g stroke="#444" stroke-width="2">
-            <circle class="paint" id="centro" cx="150" cy="150" r="22" fill="#ffffff"/>
-            <ellipse class="paint" id="p1" cx="150" cy="95" rx="28" ry="44" fill="#ffffff"/>
-            <ellipse class="paint" id="p2" cx="205" cy="120" rx="28" ry="44" fill="#ffffff" transform="rotate(30 205 120)"/>
-            <ellipse class="paint" id="p3" cx="220" cy="175" rx="28" ry="44" fill="#ffffff" transform="rotate(60 220 175)"/>
-            <ellipse class="paint" id="p4" cx="150" cy="210" rx="28" ry="44" fill="#ffffff"/>
-            <ellipse class="paint" id="p5" cx="95" cy="120" rx="28" ry="44" fill="#ffffff" transform="rotate(-30 95 120)"/>
-            <ellipse class="paint" id="p6" cx="80" cy="175" rx="28" ry="44" fill="#ffffff" transform="rotate(-60 80 175)"/>
-            <path class="paint" id="tallo" d="M150 172 C152 210, 148 238, 150 260" fill="none" stroke="#444" stroke-width="4"/>
-            <ellipse class="paint" id="hoja1" cx="170" cy="215" rx="24" ry="12" fill="#ffffff" transform="rotate(20 170 215)"/>
-            <ellipse class="paint" id="hoja2" cx="130" cy="235" rx="24" ry="12" fill="#ffffff" transform="rotate(-20 130 235)"/>
-          </g>
-        </svg>
-      </div>
-
-      <!-- PEZ -->
-      <div class="coloring-card">
-        <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:6px;">
-          <strong>Pez</strong>
-          <button class="btn btnDownload">Descargar PNG</button>
-        </div>
-        <svg data-paint-id="pez" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; background:#fff; border-radius:12px; border:1px solid #ddd">
-          <rect width="320" height="220" fill="#ffffff"/>
-          <g stroke="#444" stroke-width="2">
-            <ellipse class="paint" id="cuerpo" cx="150" cy="110" rx="80" ry="50" fill="#ffffff"/>
-            <polygon class="paint" id="cola" points="220,110 300,60 300,160" fill="#ffffff"/>
-            <circle class="paint" id="ojo" cx="125" cy="100" r="6" fill="#ffffff"/>
-            <path class="paint" id="aleta1" d="M120 140 C130 150, 150 150, 160 140 C150 145,130 145,120 140 Z" fill="#ffffff"/>
-            <path class="paint" id="aleta2" d="M90 110 C80 100, 70 95, 60 100 C70 105, 80 110, 90 110 Z" fill="#ffffff"/>
-            <path d="M138 112 Q146 118, 155 112" stroke="#444" fill="none"/>
-          </g>
-        </svg>
-      </div>
-
-      <!-- MONTAÑA -->
-      <div class="coloring-card">
-        <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:6px;">
-          <strong>Montaña</strong>
-          <button class="btn btnDownload">Descargar PNG</button>
-        </div>
-        <svg data-paint-id="montana" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; background:#fff; border-radius:12px; border:1px solid #ddd">
-          <rect width="320" height="220" fill="#ffffff"/>
-          <g stroke="#444" stroke-width="2">
-            <polygon class="paint" id="cielo" points="0,0 320,0 320,120 0,120" fill="#ffffff"/>
-            <polygon class="paint" id="montana1" points="40,120 120,30 200,120" fill="#ffffff"/>
-            <polygon class="paint" id="nieve1" points="120,30 100,60 140,60" fill="#ffffff"/>
-            <polygon class="paint" id="montana2" points="120,120 200,50 280,120" fill="#ffffff"/>
-            <polygon class="paint" id="nieve2" points="200,50 180,78 220,78" fill="#ffffff"/>
-            <rect class="paint" id="pradera" x="0" y="120" width="320" height="100" fill="#ffffff"/>
-          </g>
-        </svg>
-      </div>
-    </section>
+    <!-- Contenedor de la galería (se llena con JS) -->
+    <section class="coloring-grid" id="pngGrid" style="margin-top:16px"></section>
   </main>
 
-  <footer class="footer">Colorea libremente y guarda tus resultados ✨</footer>
+  <footer class="footer">
+    <div class="container">© 2025 Acuarela</div>
+  </footer>
+
   <script src="app.js"></script>
+  <script>
+    // Asegúrate de tener en app.js la función initImagenes() versión PNG
+    // Esta línea detecta que estamos en esta página y la inicializa.
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof initImagenes === "function") {
+        initImagenes();
+      }
+    });
+  </script>
 </body>
 </html>
